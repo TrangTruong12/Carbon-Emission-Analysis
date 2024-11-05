@@ -2,13 +2,14 @@
 This report aims to analyze carbon emissions to examine the carbon footprint across various industries. We aim to identify sectors with the highest levels of emissions by analyzing them across countries and years, as well as to uncover trends.
 ## Project's objective
 ### Data Source: Where Our Data Comes From
-Our dataset is compiled from publicly available data from nature.com and encompasses the product carbon footprints (PCF) for various companies. PCFs represent the greenhouse gas emissions associated with specific products, quantified in CO2 (carbon dioxide equivalent).
-Online SQL Console: [https://api.swisscoding.edu.vn/sqlexec/?database=carbon_emissions&standalone=true]
+Our dataset is compiled from publicly available data from [https://www.nature.com/] and encompasses the product carbon footprints (PCF) for various companies. PCFs represent the greenhouse gas emissions associated with specific products, quantified in CO2 (carbon dioxide equivalent).
+
 ### The reason we choose to do this project
 Carbon emissions play a crucial role in the environment, accounting for over 75% of global emissions and posing a significant environmental challenge. These emissions contribute to the accumulation of greenhouse gases in the atmosphere, leading to climate change, planetary warming, and involvement in various environmental disasters.
 
 Through this analysis, we hope to gain an understanding of the environmental impact of different industries and contribute to making informed decisions in sustainable development.
 ### Tools to use 
+Online SQL Console: [https://api.swisscoding.edu.vn/sqlexec/?database=carbon_emissions&standalone=true]
 ## Mining
 ### Data parterns
 Data have 171 Duplicate, query:
@@ -21,23 +22,72 @@ having count(*) > 1
 
 Data have N/A values
 
-Data structure
+### Data structure
+The dataset consists of 4 tables containing information regarding carbon emissions generated during the production of goods.
+![image](https://github.com/user-attachments/assets/21815dee-84ea-44f7-a3f6-59756c0ffda6)
+
 ### Solution
 Write a query of group by and condition to filter out the value we dont want to have write the reason why we have the solution
 ## Findings
-Most contributed carbon emissions product
-AVG, sum: carbon
-product name
+
 ### 1. Which products contribute the most to carbon emissions?
-most contributed carbon emissions product
-avg,sum: carbon
-product name
+SELECT 
+	product_name, 
+	SUM(carbon_footprint_pcf) AS Total_carbon_footprint
+FROM
+	product_emissions
+GROUP BY 
+	product_name
+ORDER BY 
+	Total_carbon_footprint DESC
+LIMIT 10
+
+Here the result:
+
+| product_name                                                                                                                       | Total_carbon_footprint | 
+| ---------------------------------------------------------------------------------------------------------------------------------: | ---------------------: | 
+| Wind Turbine G128 5 Megawats                                                                                                       | 3718044                | 
+| Wind Turbine G132 5 Megawats                                                                                                       | 3276187                | 
+| Wind Turbine G114 2 Megawats                                                                                                       | 1532608                | 
+| Wind Turbine G90 2 Megawats                                                                                                        | 1251625                | 
+| TCDE                                                                                                                               | 198150                 | 
+| Land Cruiser Prado. FJ Cruiser. Dyna trucks. Toyoace.IMV def unit.                                                                 | 191687                 | 
+| Retaining wall structure with a main wall (sheet pile): 136 tonnes of steel sheet piles and 4 tonnes of tierods per 100 meter wall | 167000                 | 
+| Electric Motor                                                                                                                     | 160655                 | 
+| Audi A6                                                                                                                            | 111282                 | 
+| Average of all GM vehicles produced and used in the 10 year life-cycle.                                                            | 100621                 | 
 ### 2. What are the industry groups of these products?
-product name, industry group name
-select industry_group, product_name
-from product_emissions
-left join industry
-group by industry_group, product_name
+
+SELECT 
+    product_emissions.product_name, 
+    industry_groups.industry_group,
+    SUM(product_emissions.carbon_footprint_pcf) AS Total_carbon_footprint
+FROM
+    product_emissions
+LEFT JOIN 
+    industry_groups
+    ON product_emissions.industry_group_id = industry_groups.id
+GROUP BY 
+    product_emissions.product_name, 
+    industry_groups.industry_group
+ORDER BY 
+    Total_carbon_footprint DESC
+LIMIT 10;
+
+Here the result:
+
+| product_name                                                                                                                       | industry_group                     | Total_carbon_footprint | 
+| ---------------------------------------------------------------------------------------------------------------------------------: | ---------------------------------: | ---------------------: | 
+| Wind Turbine G128 5 Megawats                                                                                                       | Electrical Equipment and Machinery | 3718044                | 
+| Wind Turbine G132 5 Megawats                                                                                                       | Electrical Equipment and Machinery | 3276187                | 
+| Wind Turbine G114 2 Megawats                                                                                                       | Electrical Equipment and Machinery | 1532608                | 
+| Wind Turbine G90 2 Megawats                                                                                                        | Electrical Equipment and Machinery | 1251625                | 
+| TCDE                                                                                                                               | Materials                          | 198150                 | 
+| Land Cruiser Prado. FJ Cruiser. Dyna trucks. Toyoace.IMV def unit.                                                                 | Automobiles & Components           | 191687                 | 
+| Retaining wall structure with a main wall (sheet pile): 136 tonnes of steel sheet piles and 4 tonnes of tierods per 100 meter wall | Materials                          | 167000                 | 
+| Electric Motor                                                                                                                     | Capital Goods                      | 140647                 | 
+| Audi A6                                                                                                                            | Automobiles & Components           | 111282                 | 
+| Average of all GM vehicles produced and used in the 10 year life-cycle.                                                            | Automobiles & Components           | 100621                 | 
 
 ### 3. What are the industries with the highest contribution to carbon emissions?
 
@@ -175,3 +225,5 @@ GROUP BY
 ORDER BY 
 	industry_groups.industry_group,
 	product_emissions.year 
+
+## Conclusion
